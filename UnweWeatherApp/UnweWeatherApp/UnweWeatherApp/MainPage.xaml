@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:UnweWeatherApp.ViewModels"
+             xmlns:local="clr-namespace:UnweWeatherApp"
+             x:DataType="viewModel:WeatherDataListViewModel"
+             x:Class="UnweWeatherApp.MainPage"
+             BackgroundColor="#2596be">
+             
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:LongToDateTimeConverter x:Key="longToDateTimeConverter" />
+            <local:DailyDurationTimeConverter x:Key="dailyDurationTimeConverter" />
+            <Style TargetType="Button">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="WidthRequest" Value="150"/>
+                <Setter Property="HeightRequest" Value="50"/>
+                <Setter Property="HorizontalOptions" Value="CenterAndExpand"/>
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <StackLayout Orientation="Vertical" VerticalOptions="End" Margin="0, 0, 0, 0">
+        <Entry Placeholder="Enter city name" x:Name="cityEntry" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+        <Button Text="Search" Clicked="OnGetWeatherButtonClicked"/>
+
+        <ScrollView VerticalScrollBarVisibility="Never" IsEnabled="False" Margin="0,0,0,10">
+            <StackLayout x:Name="daysStack" HeightRequest="290">
+                <StackLayout.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="White" />
+                    </Style>
+                    <Style TargetType="Frame">
+                        <Setter Property="BackgroundColor" Value="Black" />
+                        <Setter Property="Opacity" Value="0.5" />
+                        <Setter Property="CornerRadius" Value="10" />
+                        <Setter Property="Margin" Value="0, 0" />
+                        <Setter Property="WidthRequest" Value="110" />
+                    </Style>
+                </StackLayout.Resources>
+
+                <CollectionView ItemsSource="{Binding FirstDataListForEachDay}" HeightRequest="140">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModel:WeatherDataViewModel">
+                            <Frame>
+                                <StackLayout Orientation="Vertical" Padding="10">
+                                    <Label Text="{Binding DayOfWeek}" FontSize="14" Margin="5,0" FontAttributes="Bold"/>
+                                    <Image Source="{Binding WeatherIconUrl}" WidthRequest="50" HeightRequest="50"/>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding MinTemperature}" FontSize="12" />
+                                        <Label Text=" - " FontSize="10" />
+                                        <Label Text="{Binding MaxTemperature}" FontSize="12"/>
+                                    </StackLayout>
+                                </StackLayout>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnFrameTapped" NumberOfTapsRequired="1" />
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="1" />
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+        <StackLayout BackgroundColor="Black" Opacity="0.5" x:Name="detailsStack" Margin="5,0,5,5"  x:DataType="viewModel:WeatherDataListViewModel">
+            <StackLayout.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="TextColor" Value="White" />
+                    </Style>
+                </StackLayout.Resources>
+                <Label x:Name="dayLabel" FontSize="Large" HorizontalOptions="Center" Margin="0, 10"
+           Text="{Binding CurrDayWeatherDataList.DayName}" />
+                <StackLayout Orientation="Horizontal" HeightRequest="30" Margin="40, 0">
+                    <StackLayout Orientation="Horizontal" WidthRequest="100">
+                        <Image Source="@drawable/temp" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.CurrentTemperature}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" WidthRequest="100">
+                        <Image Source="@drawable/feelslike" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.FeelsLike}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" WidthRequest="100">
+                        <Image Source="@drawable/humidity" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.Humidity}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+
+                    </StackLayout>
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal" HeightRequest="30" Margin="10, 0">
+                    <StackLayout Orientation="Horizontal" WidthRequest="150">
+                        <Image Source="@drawable/sunrise" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.City.Sunrise, Converter={StaticResource longToDateTimeConverter}}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" WidthRequest="150">
+                        <Image Source="@drawable/sunset" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.City.Sunset, Converter={StaticResource longToDateTimeConverter}}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" WidthRequest="150">
+                        <Image Source="@drawable/duration" WidthRequest="20" HeightRequest="20" VerticalOptions="CenterAndExpand"/>
+                        <Label Text="{Binding CurrDayWeatherDataList.City.DailyDuration, Converter={StaticResource dailyDurationTimeConverter}}" FontSize="Medium" VerticalOptions="CenterAndExpand"/>
+
+                    </StackLayout>
+                </StackLayout>
+
+            <StackLayout x:Name="hoursStack">
+                <CollectionView ItemsSource="{Binding CurrDayWeatherDataList.HourlyData}" Margin="15, 0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModel:HourlyForecastViewModel">
+                            <StackLayout Orientation="Horizontal" HeightRequest="50">
+                                <StackLayout Orientation="Horizontal" WidthRequest="100">
+                                    <Label Text="{Binding TimeRange}" VerticalOptions="CenterAndExpand"/>
+                                    <Label Text=": " VerticalOptions="CenterAndExpand"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" WidthRequest="170">
+                                    <Label Text="L:" VerticalOptions="CenterAndExpand"/>
+                                    <Label Text="{Binding MinTemperature}" VerticalOptions="CenterAndExpand"/>
+                                    <Label Text=" - " VerticalOptions="CenterAndExpand"/>
+                                    <Label Text="H:" VerticalOptions="CenterAndExpand"/>
+                                    <Label Text="{Binding MaxTemperature}" VerticalOptions="CenterAndExpand"/>
+                                </StackLayout>
+                                <Image Source="{Binding Icon}" WidthRequest="40" HeightRequest="40" VerticalOptions="CenterAndExpand" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+    
+</ContentPage>
